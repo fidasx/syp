@@ -1,8 +1,28 @@
+//#region #imports
 import * as inquirer from "inquirer"
-import { b, g, y, w, r, opts, h, mpv } from "./config"
+import * as chalk from "chalk"
+import * as mpvAPI from "node-mpv"
 import { exec } from "child_process"
 import * as search from "youtube-search"
 import * as notif from "node-notifier"
+//#endregion
+let g = chalk.default.green
+let r = chalk.default.red
+let w = chalk.default.white
+let y = chalk.default.yellow
+let b = chalk.default.blue
+let h = chalk.default.hidden
+//#region #configs
+
+let mpv = new mpvAPI({
+  audio_only: true
+})
+
+let opts: search.YouTubeSearchOptions = {
+  maxResults: 15,
+  key: "AIzaSyDgyBRk5mimdMBu-7zPdXxmAzoPrbCMzY4"
+}
+//#endregion
 let ui = new inquirer.ui.BottomBar()
 let prompt = inquirer.createPromptModule()
 
