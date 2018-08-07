@@ -5,7 +5,8 @@
   "main": "main.ts",
   "scripts": {
     "dev": "ts-node main.ts",
-    "pkg": "pkg main.ts --targets node10-linux-x64 --output syp"
+    "pkg": "pkg main.js --targets node10-linux-x64 --output syp",
+    "setup": "sudo mv syp /usr/bin"
   },
   "author": "",
   "license": "ISC",

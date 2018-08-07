@@ -5,4 +5,4 @@
 1.  [mpv](https://mpv.io/)
 2.  [youtube-dl](https://rg3.github.io/youtube-dl/)
 
-![alt](https://imgur.com/a/K4tHAFV)
+![alt](https://imgur.com/a/K4tHAFV.png)
