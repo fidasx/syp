@@ -15,12 +15,8 @@
     "@types/keypress": "^2.0.30",
     "@types/node-notifier": "0.0.28",
     "inquirer": "^6.0.0",
-    "keypress": "^0.2.1",
     "node-mpv": "^1.4.3",
     "node-notifier": "^5.2.1",
-    "player": "^0.6.1",
-    "youtube-search": "^1.1.1",
-    "ytdl": "^0.10.2",
-    "ytdl-core": "^0.24.0"
+    "youtube-search": "^1.1.1"
   }
 }
