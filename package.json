@@ -1,0 +1,25 @@
+{
+  "name": "ytpl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "dev": "ts-node main.ts",
+    "pkg": "pkg main.ts --targets node10-linux-x64 --output syp"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/inquirer": "0.0.42",
+    "@types/keypress": "^2.0.30",
+    "@types/node-notifier": "0.0.28",
+    "inquirer": "^6.0.0",
+    "keypress": "^0.2.1",
+    "node-mpv": "^1.4.3",
+    "node-notifier": "^5.2.1",
+    "player": "^0.6.1",
+    "youtube-search": "^1.1.1",
+    "ytdl": "^0.10.2",
+    "ytdl-core": "^0.24.0"
+  }
+}
