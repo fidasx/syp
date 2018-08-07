@@ -20,7 +20,7 @@ let mpv = new mpvAPI({
 
 let opts: search.YouTubeSearchOptions = {
   maxResults: 15,
-  key: "YOUR GOOGLE API KEY"
+  key: "YOUR GOOGLE CONSOLE API KEY"
 }
 //#endregion
 let ui = new inquirer.ui.BottomBar()
