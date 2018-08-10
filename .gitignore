@@ -2,3 +2,4 @@ node_modules
 img.png
 syp
 *.js
+.vscode

@@ -17,6 +17,7 @@
     "inquirer": "^6.1.0",
     "node-mpv": "git+https://github.com/00SteinsGate00/Node-MPV.git",
     "node-notifier": "^5.2.1",
+    "typescript": "^3.0.1",
     "youtube-search": "^1.1.1"
   }
 }
