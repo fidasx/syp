@@ -37,12 +37,9 @@ function start() {
     message: "search a song"
   }).then(input => {
     search(input["input"], opts, (err, results) => {
-      let res = results.map(
-        song =>
-          !song.link.includes("playlist")
-            ? `${song.link.replace("https://www.youtube.com/watch?v=", "")} ${g("->")} ${song.title}`
-            : dim("playlists not supported")
-      )
+      let res: string[] = []
+      results.map(song => (!song.link.includes("playlist") ? res.push(`${song.id}  ${song.title}`) : null))
+
       prompt({
         name: "song",
         type: "list",
@@ -50,8 +47,10 @@ function start() {
         choices: res,
         pageSize: res.length
       }).then(songs => {
-        let url: string = "https://youtu.be/" + songs["song"]
+        let t: string = res.find(k => k == songs["song"])
 
+        let url: string = "https://youtu.be/" + t
+        console.log(url)
         let play = async () => {
           await mpv.start()
           await mpv.load(url)
@@ -62,7 +61,7 @@ function start() {
           .then(dur => {
             mpv.on("timeposition", pos => {
               ui.updateBottomBar(
-                `${g("playing")} ${songs["song"].slice(30)} ${g(
+                `${g("playing")}${songs["song"].slice(11)}  ${g(
                   Math.floor(pos / 60)
                     .toString()
                     .padStart(2, "0")
