@@ -22,7 +22,7 @@ let mpv = new mpvAPI({
 
 let opts: search.YouTubeSearchOptions = {
   maxResults: 25,
-  key: "AIzaSyDgyBRk5mimdMBu-7zPdXxmAzoPrbCMzY4"
+  key: "YOUR GOOGLE DEV KEY"
 }
 //#endregion
 let ui = new inquirer.ui.BottomBar()
