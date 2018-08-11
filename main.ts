@@ -56,7 +56,6 @@ function start() {
           let url: string = "https://youtu.be/" + songs["song"]
 
           let play = async () => {
-            exec("pkill mpv")
             await mpv.start()
             await mpv.load(url)
             return await mpv.getDuration()
@@ -97,9 +96,8 @@ function start() {
             })
             .catch(err => console.log(err))
         })
-      } else {
-        console.log(err.message)
       }
+      console.log(err.message)
     })
   })
 }
