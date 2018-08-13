@@ -8,23 +8,45 @@ import * as search from "youtube-search"
 //#endregion
 
 let g = chalk.default.green
-let r = chalk.default.red
 let w = chalk.default.white
-let y = chalk.default.yellow
-let b = chalk.default.blue
 let h = chalk.default.hidden
-let dim = chalk.default.dim
+
 //#region #configs
 
 let mpv = new mpvAPI({ audio_only: true })
 
 let opts: search.YouTubeSearchOptions = {
-	maxResults: 25,
+	maxResults: 30,
 	key: "AIzaSyDgyBRk5mimdMBu-7zPdXxmAzoPrbCMzY4"
 }
 //#endregion
 let ui = new inquirer.ui.BottomBar()
 let prompt = inquirer.createPromptModule()
+
+function notifs(title: string, message: string) {
+	return notif.notify({
+		title: title,
+		message: message
+	})
+}
+
+function filterstr(str: string) {
+	return (
+		str
+			.toLowerCase()
+			.replace(/\W/g, "")
+			.charAt(0)
+			.toUpperCase() +
+		str
+			.replace(/\W/g, " ")
+			.replace("24 7", "24/7")
+			.replace(/\s\s+/g, " ")
+			.replace(/[\u1000-\uFFFF]+/g, "")
+			.substr(1)
+
+			.trim()
+	)
+}
 
 function start() {
 	console.clear()
@@ -38,15 +60,10 @@ function start() {
 				prompt({
 					name: "song",
 					type: "list",
-					message: "",
-					choices: results
-						.map(
-							song =>
-								!song.link.includes("playlist")
-									? `${song.title.toLowerCase().replace(/[\u1000-\uFFFF]+/g, "")} ${h(song.id)}`
-									: dim("playlists not supported")
-						)
-						.sort(),
+					message: "results",
+					choices: results.map(
+						song => (!song.link.includes("playlist") ? `${filterstr(song.title)} ${h(song.id)}` : h(song.title))
+					),
 					pageSize: results.length
 				}).then(songs => {
 					let songId: string = `https://youtu.be/${songs["song"].slice(-16)}`
@@ -77,18 +94,12 @@ function start() {
 								)
 							})
 							mpv.on("started", () => {
-								notif.notify({
-									title: "Now playing",
-									message: songName
-								})
+								notifs("Now playing", songName)
 							})
 						})
 						.then(() => {
 							mpv.on("stopped", () => {
-								notif.notify({
-									title: "Song ended",
-									message: songName
-								})
+								notifs("Song Ended", songName)
 								mpv.quit()
 							})
 						})
