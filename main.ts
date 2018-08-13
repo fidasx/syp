@@ -4,6 +4,7 @@ import * as inquirer from "inquirer"
 import * as mpvAPI from "node-mpv"
 import * as notif from "node-notifier"
 import * as search from "youtube-search"
+import { exec } from "child_process"
 
 //#endregion
 
@@ -73,6 +74,7 @@ function start() {
 
 					play()
 						.then(dur => {
+							exec("xfce4-terminal -e  cava | lolcat")
 							mpv.on("timeposition", pos => {
 								ui.updateBottomBar(
 									`${b("playing ")}${filterstr(songName)} ${b(
@@ -96,6 +98,7 @@ function start() {
 							mpv.on("stopped", () => {
 								notifs("Song Ended", filterstr(songName))
 								mpv.quit()
+								exec("pkill cava")
 							})
 						})
 						.catch(err => console.log(err))
