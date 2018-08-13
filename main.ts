@@ -7,10 +7,12 @@ import * as search from "youtube-search"
 
 //#endregion
 
-let g = chalk.default.green
+let b = chalk.default.cyan
 let w = chalk.default.white
 let h = chalk.default.hidden
-
+let y = chalk.default.yellow
+let sep = new inquirer.Separator("-------------------------")
+let num: number = 0
 //#region #configs
 
 let mpv = new mpvAPI({ audio_only: true })
@@ -32,21 +34,13 @@ function notifs(title: string, message: string) {
 }
 
 function filterstr(str: string) {
-	return (
-		str
-			.toLowerCase()
-			.replace(/\W/g, "")
-			.charAt(0)
-			.toUpperCase() +
-		str
-			.replace(/\W/g, " ")
-			.replace("24 7", "24/7")
-			.replace(/\s\s+/g, " ")
-			.replace(/[\u1000-\uFFFF]+/g, "")
-			.substr(1)
+	return str
 
-			.trim()
-	)
+		.toLowerCase()
+		.replace(/\W/g, " ")
+		.replace("24 7", "24/7")
+		.replace(/\s\s+/g, " ")
+		.replace(/[\u1000-\uFFFF]+/g, "")
 }
 
 function start() {
@@ -62,11 +56,14 @@ function start() {
 					name: "song",
 					type: "list",
 					message: "results",
-					choices: results.map(song => `${filterstr(song.title)} ${h(song.id)}`),
+					choices: results.map(
+						song => `${num < 10 ? b(`${"0" + num++}`) : b(`${num++}`)}  ${filterstr(song.title)} ${h(song.id)}`
+					),
 					pageSize: results.length
 				}).then(songs => {
+					console.log("----------------------------------------------------")
 					let songId: string = `https://youtu.be/${songs["song"].slice(-16)}`
-					let songName: string = songs["song"]
+					let songName: string = songs["song"].slice(25, -18)
 
 					let play = async () => {
 						await mpv.start()
@@ -78,11 +75,11 @@ function start() {
 						.then(dur => {
 							mpv.on("timeposition", pos => {
 								ui.updateBottomBar(
-									`${g("playing ")}${songName}  ${g(
+									`${b("playing ")}${filterstr(songName)} ${b(
 										Math.floor(pos / 60)
 											.toString()
 											.padStart(2, "0")
-									)}${w(":")}${g(
+									)}${w(":")}${b(
 										Math.floor(pos % 60)
 											.toString()
 											.padStart(2, "0")
@@ -92,12 +89,12 @@ function start() {
 								)
 							})
 							mpv.on("started", () => {
-								notifs("Now playing", songName)
+								notifs("Now playing", filterstr(songName))
 							})
 						})
 						.then(() => {
 							mpv.on("stopped", () => {
-								notifs("Song Ended", songName)
+								notifs("Song Ended", filterstr(songName))
 								mpv.quit()
 							})
 						})
