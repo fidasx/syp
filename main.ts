@@ -63,7 +63,7 @@ function start() {
 				}).then(songs => {
 					console.log("----------------------------------------------------")
 					let songId: string = `https://youtu.be/${songs["song"].slice(-16)}`
-					let songName: string = songs["song"].slice(25, -18)
+					let songName: string = songs["song"].slice(14, -18)
 
 					let play = async () => {
 						await mpv.start()
@@ -83,7 +83,7 @@ function start() {
 										Math.floor(pos % 60)
 											.toString()
 											.padStart(2, "0")
-									)} / ${Math.floor((dur % 3600) / 60)}:${Math.floor((dur % 3600) % 60)
+									)} - ${Math.floor((dur % 3600) / 60)}:${Math.floor((dur % 3600) % 60)
 										.toString()
 										.padStart(2, "0")}`
 								)
