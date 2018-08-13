@@ -1,10 +1,10 @@
 //#region #imports
-import * as mpvAPI from "node-mpv"
-import * as inquirer from "inquirer"
 import * as chalk from "chalk"
-import { exec } from "child_process"
-import * as search from "youtube-search"
+import * as inquirer from "inquirer"
+import * as mpvAPI from "node-mpv"
 import * as notif from "node-notifier"
+import * as search from "youtube-search"
+
 //#endregion
 
 let g = chalk.default.green
@@ -16,89 +16,87 @@ let h = chalk.default.hidden
 let dim = chalk.default.dim
 //#region #configs
 
-let mpv = new mpvAPI({
-  audio_only: true
-})
+let mpv = new mpvAPI({ audio_only: true })
 
 let opts: search.YouTubeSearchOptions = {
-  maxResults: 25,
-  key: "YOUR GOOGLE DEV KEY"
+	maxResults: 25,
+	key: "AIzaSyDgyBRk5mimdMBu-7zPdXxmAzoPrbCMzY4"
 }
 //#endregion
 let ui = new inquirer.ui.BottomBar()
 let prompt = inquirer.createPromptModule()
 
 function start() {
-  console.clear()
-  prompt({
-    name: "input",
-    type: "input",
-    message: "search a song"
-  }).then(input => {
-    search(input["input"], opts, (err, results) => {
-      if (!err) {
-        let res: string[] = []
-        results.map(
-          song =>
-            !song.link.includes("playlist")
-              ? res.push(`${song.id}  ${song.title.replace(/[\u1000-\uFFFF]+/g, " ")}`)
-              : null
-        )
+	console.clear()
+	prompt({
+		name: "input",
+		type: "input",
+		message: "search a song"
+	}).then(input => {
+		search(input["input"], opts, (err, results) => {
+			if (!err) {
+				prompt({
+					name: "song",
+					type: "list",
+					message: "",
+					choices: results
+						.map(
+							song =>
+								!song.link.includes("playlist")
+									? `${song.title.toLowerCase().replace(/[\u1000-\uFFFF]+/g, "")} ${h(song.id)}`
+									: dim("playlists not supported")
+						)
+						.sort(),
+					pageSize: results.length
+				}).then(songs => {
+					let songId: string = `https://youtu.be/${songs["song"].slice(-16)}`
 
-        prompt({
-          name: "song",
-          type: "list",
-          message: "",
-          choices: res,
-          pageSize: res.length
-        }).then(songs => {
-          console.clear()
-          let url: string = "https://youtu.be/" + songs["song"]
+					let songName: string = songs["song"]
+					console.log(songId)
+					let play = async () => {
+						await mpv.start()
+						await mpv.load(songId)
+						return await mpv.getDuration()
+					}
 
-          let play = async () => {
-            await mpv.start()
-            await mpv.load(url)
-            return await mpv.getDuration()
-          }
-
-          play()
-            .then(dur => {
-              mpv.on("timeposition", pos => {
-                ui.updateBottomBar(
-                  `${g("playing")}${songs["song"].slice(11)}  ${g(
-                    Math.floor(pos / 60)
-                      .toString()
-                      .padStart(2, "0")
-                  )}${w(":")}${g(
-                    Math.floor(pos % 60)
-                      .toString()
-                      .padStart(2, "0")
-                  )} / ${Math.floor((dur % 3600) / 60)}:${Math.floor((dur % 3600) % 60)
-                    .toString()
-                    .padStart(2, "0")}`
-                )
-              })
-              mpv.on("started", () => {
-                notif.notify({
-                  title: "Now playing",
-                  message: songs["song"].slice(30)
-                })
-              })
-            })
-            .then(() => {
-              mpv.on("stopped", () => {
-                notif.notify({
-                  title: "Song ended",
-                  message: songs["song"].slice(30)
-                })
-                mpv.quit()
-              })
-            })
-            .catch(err => console.log(err))
-        })
-      }
-      console.log(err.message)
-    })
-  })
+					play()
+						.then(dur => {
+							mpv.on("timeposition", pos => {
+								ui.updateBottomBar(
+									`${g("playing ")}${songName}  ${g(
+										Math.floor(pos / 60)
+											.toString()
+											.padStart(2, "0")
+									)}${w(":")}${g(
+										Math.floor(pos % 60)
+											.toString()
+											.padStart(2, "0")
+									)} / ${Math.floor((dur % 3600) / 60)}:${Math.floor((dur % 3600) % 60)
+										.toString()
+										.padStart(2, "0")}`
+								)
+							})
+							mpv.on("started", () => {
+								notif.notify({
+									title: "Now playing",
+									message: songName
+								})
+							})
+						})
+						.then(() => {
+							mpv.on("stopped", () => {
+								notif.notify({
+									title: "Song ended",
+									message: songName
+								})
+								mpv.quit()
+							})
+						})
+						.catch(err => console.log(err))
+				})
+			}
+			console.log(err.message)
+		})
+	})
 }
 start()
