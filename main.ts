@@ -17,7 +17,8 @@ let mpv = new mpvAPI({ audio_only: true })
 
 let opts: search.YouTubeSearchOptions = {
 	maxResults: 30,
-	key: "GOOGLE KEY"
+	key: "AIzaSyDgyBRk5mimdMBu-7zPdXxmAzoPrbCMzY4",
+	type: "video"
 }
 //#endregion
 let ui = new inquirer.ui.BottomBar()
@@ -61,15 +62,12 @@ function start() {
 					name: "song",
 					type: "list",
 					message: "results",
-					choices: results.map(
-						song => (!song.link.includes("playlist") ? `${filterstr(song.title)} ${h(song.id)}` : h(song.title))
-					),
+					choices: results.map(song => `${filterstr(song.title)} ${h(song.id)}`),
 					pageSize: results.length
 				}).then(songs => {
 					let songId: string = `https://youtu.be/${songs["song"].slice(-16)}`
-
 					let songName: string = songs["song"]
-					console.log(songId)
+
 					let play = async () => {
 						await mpv.start()
 						await mpv.load(songId)
