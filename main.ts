@@ -17,7 +17,7 @@ let mpv = new mpvAPI({ audio_only: true })
 
 let opts: search.YouTubeSearchOptions = {
 	maxResults: 30,
-	key: "AIzaSyDgyBRk5mimdMBu-7zPdXxmAzoPrbCMzY4"
+	key: "GOOGLE KEY"
 }
 //#endregion
 let ui = new inquirer.ui.BottomBar()
