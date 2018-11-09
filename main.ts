@@ -4,7 +4,6 @@ import * as inquirer from "inquirer"
 import * as mpvAPI from "node-mpv"
 import * as notif from "node-notifier"
 import * as search from "youtube-search"
-import { exec } from "child_process"
 
 //#endregion
 
@@ -12,7 +11,6 @@ let b = chalk.default.cyan
 let w = chalk.default.white
 let h = chalk.default.hidden
 let y = chalk.default.yellow
-let sep = new inquirer.Separator("-------------------------")
 let num: number = 0
 //#region #configs
 
@@ -35,13 +33,15 @@ function notifs(title: string, message: string) {
 }
 
 function filterstr(str: string) {
-	return str
+	return (
+		str
 
-		.toLowerCase()
-		.replace(/\W/g, " ")
-		.replace("24 7", "24/7")
-		.replace(/\s\s+/g, " ")
-		.replace(/[\u1000-\uFFFF]+/g, "")
+			.toLowerCase()
+			//.replace(/\W/g, " ")
+			.replace("24 7", "24/7")
+			.replace(/\s\s+/g, "")
+			.replace(/[\u1000-\uFFFF]+/g, "")
+	)
 }
 
 function start() {
@@ -57,14 +57,12 @@ function start() {
 					name: "song",
 					type: "list",
 					message: "results",
-					choices: results.map(
-						song => `${num < 10 ? b(`${"0" + num++}`) : b(`${num++}`)}  ${filterstr(song.title)} ${h(song.id)}`
-					),
+					choices: results.map(song => `${b(`${num++}`)}  ${filterstr(song.title)} ${h(song.id)}`),
 					pageSize: results.length
 				}).then(songs => {
 					console.log("----------------------------------------------------")
 					let songId: string = `https://youtu.be/${songs["song"].slice(-16)}`
-					let songName: string = songs["song"].slice(14, -18)
+					let songName: string = songs["song"].slice(13, -18)
 
 					let play = async () => {
 						await mpv.start()
@@ -74,7 +72,6 @@ function start() {
 
 					play()
 						.then(dur => {
-							exec("xfce4-terminal -e  cava | lolcat")
 							mpv.on("timeposition", pos => {
 								ui.updateBottomBar(
 									`${b("playing ")}${filterstr(songName)} ${b(
@@ -98,7 +95,6 @@ function start() {
 							mpv.on("stopped", () => {
 								notifs("Song Ended", filterstr(songName))
 								mpv.quit()
-								exec("pkill cava")
 							})
 						})
 						.catch(err => console.log(err))

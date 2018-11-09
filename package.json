@@ -1,23 +1,24 @@
 {
-  "name": "ytpl",
-  "version": "1.0.0",
-  "description": "simple youtube cli",
-  "main": "main.ts",
-  "scripts": {
-    "dev": "ts-node main.ts",
-    "pkg": "nexe main.ts --output syp ",
-    "setup": "sudo mv syp /usr/bin"
-  },
-  "author": "fidasx",
-  "license": "LOL",
-  "devDependencies": {
-    "@types/inquirer": "0.0.42",
-    "@types/keypress": "^2.0.30",
-    "@types/node-notifier": "0.0.28",
-    "inquirer": "^6.1.0",
-    "node-mpv": "./node_modules/node-mpv",
-    "node-notifier": "^5.2.1",
-    "typescript": "^3.0.1",
-    "youtube-search": "^1.1.1"
-  }
+	"name": "ytpl",
+	"version": "1.0.0",
+	"description": "simple youtube cli",
+	"main": "main.ts",
+	"scripts": {
+		"dev": "ts-node main.ts",
+		"pkg": "nexe main.ts -t x86_64-10.12.0 --output syp ",
+		"install": "sudo mv syp /usr/bin"
+	},
+	"author": "fidasx",
+	"license": "LOL",
+	"devDependencies": {
+		"@types/inquirer": "latest",
+		"@types/keypress": "latest",
+		"@types/node-notifier": "latest",
+		"inquirer": "latest",
+		"node-mpv": "latest",
+		"node-notifier": "latest",
+		"typescript": "latest",
+		"youtube-search": "latest",
+		"ts-node": "latest"
+	}
 }
