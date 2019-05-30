@@ -5,20 +5,20 @@
 	"main": "main.ts",
 	"scripts": {
 		"dev": "ts-node main.ts",
-		"pkg": "nexe main.ts -t x86_64-10.12.0 --output syp ",
-		"install": "sudo mv syp /usr/bin"
+		"pkg": "pkg main.js --targets node12-linux-x64  ",
+		"build": "sudo mv syp /usr/bin "
 	},
 	"author": "fidasx",
 	"license": "LOL",
 	"devDependencies": {
-		"@types/inquirer": "latest",
+		"@types/inquirer": "^6.0.3",
 		"@types/keypress": "latest",
 		"@types/node-notifier": "latest",
 		"inquirer": "latest",
 		"node-mpv": "latest",
 		"node-notifier": "latest",
-		"typescript": "latest",
-		"youtube-search": "latest",
-		"ts-node": "latest"
+		"ts-node": "^8.2.0",
+		"typescript": "^3.5.1",
+		"youtube-search": "latest"
 	}
 }
