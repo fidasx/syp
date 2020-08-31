@@ -2,12 +2,10 @@
 
 ## requires
 
-1. [google key](https://console.cloud.google.com/apis/dashboard)
+1. [mpv](https://mpv.io/)
 
-2. [mpv](https://mpv.io/)
+2. [youtube-dl](https://rg3.github.io/youtube-dl/)
 
-3. [youtube-dl](https://rg3.github.io/youtube-dl/)
-
-4. [nodejs](https://nodejs.org/en/)
+3ya. [nodejs](https://nodejs.org/en/)
 
 ![alt](https://i.imgur.com/NmkmA38.png)
