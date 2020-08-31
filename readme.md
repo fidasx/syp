@@ -6,6 +6,6 @@
 
 2. [youtube-dl](https://rg3.github.io/youtube-dl/)
 
-3ya. [nodejs](https://nodejs.org/en/)
+3. [nodejs](https://nodejs.org/en/)
 
 ![alt](https://i.imgur.com/NmkmA38.png)
