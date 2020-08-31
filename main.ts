@@ -1,105 +1,43 @@
-//#region #imports
-import * as chalk from "chalk"
-import * as inquirer from "inquirer"
-import * as mpvAPI from "node-mpv"
-import * as notif from "node-notifier"
-import * as search from "youtube-search"
-
-//#endregion
-
-let b = chalk.cyan
-let w = chalk.white
-let h = chalk.hidden
-let y = chalk.yellow
-let num: number = 0
-//#region #configs
-
-let mpv = new mpvAPI({ audio_only: true }, ["--no-config", "--load-scripts=no"])
-
-let opts: search.YouTubeSearchOptions = {
-    maxResults: 30,
-    key: "YOUR_KEY",
-    type: "video"
-}
-//#endregion
-let ui = new inquirer.ui.BottomBar()
-let prompt = inquirer.createPromptModule()
-
-function notifs(title: string, message: string) {
-    return notif.notify({
-        title: title,
-        message: message
-    })
+import { prompt } from "enquirer"
+import { exec } from "child_process"
+import * as ytps from "yt-search"
+let pad = 5
+function filterstr(str: string, pad: number) {
+	return str
+		?.toLocaleLowerCase()
+		.replace(/[^A-Za-z0-9\s!?\u0000-\u0080\u0082]/g, "")
+		.trim()
+		.padStart(str.length + pad)
 }
 
-function filterstr(str: string) {
-    return (
-        str
-            .toLowerCase()
-            //.replace(/\W/g, " ")
-            .replace("24 7", "24/7")
-            .replace(/\s\s+/g, "")
-            .replace(/[\u1000-\uFFFF]+/g, "")
-    )
-}
-let play = async (songId: string) => {
-    await mpv.start()
-    await mpv.load(songId)
-    return await mpv.getDuration()
-}
+async function start() {
+	console.clear()
 
-function start() {
-    console.clear()
-    prompt({
-        name: "input",
-        type: "input",
-        message: "search a song"
-    }).then(input => {
-        search(input["input"], opts, (err, results) => {
-            if (!err) {
-                prompt({
-                    name: "song",
-                    type: "list",
-                    message: "results",
-                    choices: results.map(song => `${b(`${num++}`)} ${filterstr(song.title)} ${h(song.id)}`),
-                    pageSize: results.length
-                }).then(songs => {
-                    console.log("----------------------------------------------------")
-                    let songId: string = `https://youtu.be/${songs["song"].slice(-16)}`
-                    let songName: string = songs["song"].slice(13, -18)
+	try {
+		let input = await prompt({ name: "input", type: "text", message: "Search for a song" })
+		const yt = await ytps({ query: input["input"] && input["input"] })
+		let titles = yt.videos.map((i, index) => String(index) + filterstr(i.title, index > 9 ? (pad = 4) : 5))
 
-                    play(songId)
-                        .then(dur => {
-                            mpv.on("timeposition", pos => {
-                                ui.updateBottomBar(
-                                    `${b("playing ")}${filterstr(songName)} ${b(
-                                        Math.floor(pos / 60)
-                                            .toString()
-                                            .padStart(2, "0")
-                                    )}${w(":")}${b(
-                                        Math.floor(pos % 60)
-                                            .toString()
-                                            .padStart(2, "0")
-                                    )} - ${Math.floor((dur % 3600) / 60)}:${Math.floor((dur % 3600) % 60)
-                                        .toString()
-                                        .padStart(2, "0")}`
-                                )
-                            })
-                            mpv.on("started", () => {
-                                notifs("Now playing", filterstr(songName))
-                            })
-                        })
-                        .then(() => {
-                            mpv.on("stopped", () => {
-                                notifs("Song Ended", filterstr(songName))
-                                mpv.quit()
-                            })
-                        })
-                        .catch(err => console.log(err))
-                })
-            }
-            console.log(err.message)
-        })
-    })
+		let combinedVideos = yt.videos.map((i, index) => {
+			return { title: String(index) + filterstr(i.title, index > 9 ? (pad = 4) : 5), url: i.url }
+		})
+
+		let songList = await prompt({
+			type: "autocomplete",
+			message: "results",
+			name: "song",
+			choices: titles,
+			sort: false,
+			align: "left",
+		})
+		let song = combinedVideos.find(item => item.title === songList["song"])
+		let mpv = exec(`mpv --no-config --no-video  ${song.url} `)
+
+		mpv.stdout.on("data", data => {
+			console.log(data)
+		})
+	} catch (error) {
+		console.log(error.response.data.message)
+	}
 }
 start()
