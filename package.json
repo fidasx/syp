@@ -5,7 +5,7 @@
 	"main": "main.ts",
 	"scripts": {
 		"dev": "ts-node main.ts",
-		"build": "nexe -t linux-x64-12.9.1s main.js -o syp",
+		"build": " nexe -t linux-x64-12.9.1 main.js -o syp",
 		"cp": "sudo cp syp ~/.bin "
 	},
 	"author": "fidasx",
